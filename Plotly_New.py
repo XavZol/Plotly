@@ -4,35 +4,42 @@ from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 from dash import dcc
 import streamlit as st
+import numpy as np
 
-fig = go.Figure(go.Scattergeo(lon=[-3.7, -99.1, -77.0],
-                                lat=[40.4, 19.4, -12.0],
-                                text=["Madrid", "México DF", "Lima"],
-                                mode='markers'))
-fig.update_layout(title='Mapa Básico de Puntos',
-                    geo_scope='world') # south america
+fig = go.Figure(data=[go.Scatter3d(x=[1, 2, 3, 4, 5],
+                                    y=[10, 11, 12, 13, 14],
+                                    z=[5, 6, 7, 8, 9],
+                                    mode='markers',
+                                    marker=dict(size=10,
+                                                color=[10, 20, 30, 40, 50],
+                                                colorscale='viridis',
+                                                opacity=0.8))])
 
-fig2 = go.Figure(go.Scattergeo(lon=[-3.7, -99.1, -77.0],
-                                lat=[40.4, 19.4, -12.0],
-                                text=["Madrid", "México DF", "Lima"],
-                                mode='markers',
-                                marker=dict(size=[16, 44, 48],
-                                            color=[10, 20, 30],
-                                            colorscale='Viridis',
-                                            showscale=True)))
+fig.update_layout(title='Gráfico en 3D',
+                    scene=dict(xaxis_title='Eje X',
+                                yaxis_title='Eje Y',
+                                zaxis_title='Eje Z'))
 
-df = px.data.gapminder()
-df.head()
+x = np.linspace(-5, 5, 50)
+y = np.linspace(-5, 5, 50)
+x, y = np.meshgrid(x, y)
+z = np.sin(np.sqrt(x**2 + y**2))
 
-fig3 = px.choropleth(df, 
-                        locations='iso_alpha',
-                        color='lifeExp',
-                        hover_name='country',
-                        color_continuous_scale=px.colors.sequential.Plasma,
-                        animation_frame='year')
+fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale='viridis')])
+
+fig2 = go.Figure(data=[go.Scatter3d(x=[1, 2, 3, 4, 5],
+                                    y=[10, 11, 12, 13, 14],
+                                    z=[5, 6, 7, 8, 9],
+                                    mode='lines',
+                                    line=dict(color="blue",
+                                                width=2))])
+
+fig2.update_layout(title='Gráfico de líneas en 3D',
+                    scene=dict(xaxis_title='Eje X',
+                                yaxis_title='Eje Y',
+                                zaxis_title='Eje Z'))
 
 fig.write_image("grafico.png")
 dcc.Graph(figure=fig)
 st.plotly_chart(fig)
 st.plotly_chart(fig2)
-st.plotly_chart(fig3)
