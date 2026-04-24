@@ -2,34 +2,40 @@ import plotly.graph_objects as go
 
 fig = go.Figure()
 
-mi_trazado = go.Scatter(x=[1, 2, 3, 4, 5],
-                        y=[10, 11, 12, 13, 14],
-                        mode='markers')
+fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
+                        y=[10, 15, 12, 17, 14],
+                        mode='lines',
+                        name='Linea'))
 
-fig.add_trace(mi_trazado)
+fig2 = go.Figure()
+fig2.add_trace(go.Bar(x=[1, 2, 3, 4, 5],
+                        y=[5, 6, 7, 8, 9],
+                        marker=dict(color='rgba(0, 128, 255, .6)',
+                                    line=dict(color='rgb(0, 0, 0)',
+                                                width=1.5))))
+fig2.update_layout(title='Gráfico de Barras',
+                    xaxis_title='Eje X',
+                    yaxis_title='Eje Y')
 
+fig3 = go.Figure()
+fig3.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
+                        y=[10, 15, 12, 17, 14],
+                        mode='lines',
+                        fill='tozeroy',
+                        name='area'))
+fig3.update_layout(title='Gráfico de Area',
+                    xaxis_title='Eje X',
+                    yaxis_title='Eje Y')
 
-mi_trazado = go.Scatter(x=[1, 2, 3, 4, 5],
-                        y=[10, 11, 12, 13, 14],
-                        mode='markers',
-                        marker=dict(size=12,
-                                    color='rgba(255, 0, 0, 0.8)'),
-                                    line=dict(width=2,
-                                                color='DarkSlateGrey'))
-fig.update_traces(mi_trazado)
+fig4 = go.Figure()
+fig4.add_trace(go.Pie(labels=['A', 'B', 'C', 'D'],
+                        values=[4500, 2500, 1050, 750]))
+fig4.update_layout(title='Gráfico de Circular')
 
-mi_layout = go.Layout(title='Ejemplo de gráfico con Plotly',
-                        xaxis=dict(title='Eje de las X'),
-                        yaxis=dict(title='Eje de las Y'))
+data = go.Histogram(x=[1, 2, 2, 3, 3, 3, 4])
 
-fig.update_layout(mi_layout)
+fig5 = go.Figure(data=data)
+fig5.update_layout(title='Histograma')
 
-
-trazado_barras = go.Bar(x=[1, 2, 3, 4, 5],
-                            y=[5, 10, 12, 7])
-fig.add_trace(trazado_barras)
-
-# Guardar el gráfico como archivo HTML
-fig.write_html("grafico.html")
+fig5.write_html("grafico.html")
 print("Gráfico guardado como 'grafico.html'. Ábrelo en tu navegador.")
-
