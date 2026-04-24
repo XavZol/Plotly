@@ -1,37 +1,93 @@
 import plotly.graph_objects as go
 import plotly.figure_factory as ff
+from dash import dcc
+import streamlit as st
 
-z = [[1, 20, 30],
-        [20, 1, 60],
-        [30, 60, 1]]
 
-fig = go.Figure(data=go.Heatmap(z=z))
+fig = go.Figure()
 
-fig.update_layout(title='Mapa de Calor')
+fig.add_trace(go.Bar(x=[1, 2, 3, 4, 5],
+                    y=[17, 10, 14, 15, 18],
+                    name='barras'))
 
-fig2 = go.Figure(data=go.Box(y=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
-fig2.update_layout(title='Gráfico de Caja')
+fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
+                        y=[16, 12, 11, 18, 19],
+                        mode='lines',
+                        name='linea'))
 
-fig3 = go.Figure(data=go.Scatter(x=[1, 2, 3, 4, 5],
-                                    y=[10, 15, 13, 17, 14],
-                                    mode='lines+markers'))
-fig3.update_layout(title='Gráfico de Dispersión con Líneas')
+layout = go.Layout(title='Gráfico Personalizado',
+                xaxis_title='Eje X',
+                yaxis_title='Eje Y')
 
-y0 = [2, 3, 4, 5, 6, 7 , 8, 9]
-y1 = [3, 4, 5, 6, 7 , 8, 9, 10]
+fig.update_layout(layout)
 
-fig4 = go.Figure()
-fig4.add_trace(go.Violin(y=y0,
-                            name='y0',
-                            box_visible=True,
-                            meanline_visible=True))
-fig4.add_trace(go.Violin(y=y1,
-                            name='y1',
-                            box_visible=True,
-                            meanline_visible=True))
-fig4.update_layout(title='Gráfico de Violín')
+fig.update_traces(
+    selector=dict(name='linea'),
+    line=dict(color='firebrick', width=4))
 
-df = [dict(Task='Tarea A', Start='2024-01-01', Finish='2024-01-05'),
-        dict(Task='Tarea B', Start='2024-01-06', Finish='2024-01-10')]
-fig5 = ff.create_gantt(df)
-fig5.update_layout(title='Gráfico de Gantt')
+fig.update_traces(
+    selector=dict(name='barras'),
+    marker=dict(color='lightgreen'))
+
+fig.update_layout(bargap=0.4)
+
+fig.update_layout(
+    title=dict(
+        text='Este es mi gráfico<br><sup>Subtítulo del Gráfico</sup>',
+        font=dict(size=24, color='purple', family='Times New Roman'),
+        x=0.5,
+        xanchor='center'))
+
+# Títulos de Ejes
+fig.update_layout(
+    xaxis_title=dict(font=dict(size=18, color='blue', family='Courier New')),
+    yaxis_title=dict(font=dict(size=18, color='green', family='Courier New')))
+
+fig.update_layout(
+    plot_bgcolor='rgba(123, 65, 78, 0.5)', 
+    paper_bgcolor='lightblue')
+
+fig.add_annotation(
+    x=2,
+    y=12,
+    text="Punto Clave",
+    showarrow=True,
+    arrowhead=5,
+    ax=20,
+    ay=-30)
+
+fig.add_annotation(
+    x=3,
+    y=14,
+    text="Otro Punto Clave",
+    showarrow=True,
+    arrowhead=2,
+    ax=-50,
+    ay=-50,
+    font=dict(
+        family="Courier New, monospace",
+        size=16,
+        color="#ffffff"),
+    align="center",
+    arrowcolor="#45e6aa",
+    arrowsize=1,
+    arrowwidth=2,
+    bordercolor="#45e6aa",
+    borderwidth=2,
+    borderpad=4,
+    bgcolor="#666aef",
+    opacity=0.5)
+
+fig.update_traces(
+    selector=dict(name='linea'),
+    text=['A', 'B', 'C', 'D', 'E'],
+    hoverinfo='text')
+
+fig.update_traces(
+    selector=dict(name='linea'),
+    text=['A', 'B', 'C', 'D', 'E'],
+    hovertemplate='X: %{x}<br>Y: %{y}<br>Texto: %{text}<extra>Info</extra>')
+
+fig.write_image("grafico.png")
+dcc.Graph(figure=fig)
+st.plotly_chart(fig)
