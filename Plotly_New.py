@@ -1,93 +1,55 @@
 import plotly.graph_objects as go
+import plotly.express as px
+from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
 from dash import dcc
 import streamlit as st
 
+fig = make_subplots(rows=2, cols=2)
 
-fig = go.Figure()
+plot1 = go.Scatter(x=[1, 2, 3],
+                y=[4, 5, 6],
+                mode='lines+markers',
+                name='Plot 1')
+fig.add_trace(plot1, row=1, col=1)
 
-fig.add_trace(go.Bar(x=[1, 2, 3, 4, 5],
-                    y=[17, 10, 14, 15, 18],
-                    name='barras'))
+plot2 = go.Bar(x=['A', 'B', 'C'],
+            y=[7, 8, 9],
+            name='Plot 2')
+fig.add_trace(plot2, row=1, col=2)
 
-fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
-                        y=[16, 12, 11, 18, 19],
-                        mode='lines',
-                        name='linea'))
+plot3 = go.Scatter(x=[1, 2, 3],
+                y=[2, 3, 4],
+                mode='markers',
+                name='Plot 3')
+fig.add_trace(plot3, row=2, col=1)
 
-layout = go.Layout(title='Gráfico Personalizado',
-                xaxis_title='Eje X',
-                yaxis_title='Eje Y')
+plot4 = go.Bar(x=['X', 'Y', 'Z'],
+            y=[1, 3, 2],
+            name='Plot 4')
+fig.add_trace(plot4, row=2, col=2)
 
-fig.update_layout(layout)
+fig.update_layout(title="Subplots Básicos",
+                    showlegend=False)
 
-fig.update_traces(
-    selector=dict(name='linea'),
-    line=dict(color='firebrick', width=4))
+fig2 = make_subplots(rows=2, cols=2, shared_xaxes=True, shared_yaxes=True)
+fig2.add_trace(plot1, row=1, col=1)
+fig2.add_trace(plot2, row=1, col=2)
+fig2.add_trace(plot3, row=2, col=1)
+fig2.add_trace(plot4, row=2, col=2)
+fig2.update_layout(title="Subplots con ejes compartidos",
+                    showlegend=False)
 
-fig.update_traces(
-    selector=dict(name='barras'),
-    marker=dict(color='lightgreen'))
-
-fig.update_layout(bargap=0.4)
-
-fig.update_layout(
-    title=dict(
-        text='Este es mi gráfico<br><sup>Subtítulo del Gráfico</sup>',
-        font=dict(size=24, color='purple', family='Times New Roman'),
-        x=0.5,
-        xanchor='center'))
-
-# Títulos de Ejes
-fig.update_layout(
-    xaxis_title=dict(font=dict(size=18, color='blue', family='Courier New')),
-    yaxis_title=dict(font=dict(size=18, color='green', family='Courier New')))
-
-fig.update_layout(
-    plot_bgcolor='rgba(123, 65, 78, 0.5)', 
-    paper_bgcolor='lightblue')
-
-fig.add_annotation(
-    x=2,
-    y=12,
-    text="Punto Clave",
-    showarrow=True,
-    arrowhead=5,
-    ax=20,
-    ay=-30)
-
-fig.add_annotation(
-    x=3,
-    y=14,
-    text="Otro Punto Clave",
-    showarrow=True,
-    arrowhead=2,
-    ax=-50,
-    ay=-50,
-    font=dict(
-        family="Courier New, monospace",
-        size=16,
-        color="#ffffff"),
-    align="center",
-    arrowcolor="#45e6aa",
-    arrowsize=1,
-    arrowwidth=2,
-    bordercolor="#45e6aa",
-    borderwidth=2,
-    borderpad=4,
-    bgcolor="#666aef",
-    opacity=0.5)
-
-fig.update_traces(
-    selector=dict(name='linea'),
-    text=['A', 'B', 'C', 'D', 'E'],
-    hoverinfo='text')
-
-fig.update_traces(
-    selector=dict(name='linea'),
-    text=['A', 'B', 'C', 'D', 'E'],
-    hovertemplate='X: %{x}<br>Y: %{y}<br>Texto: %{text}<extra>Info</extra>')
+df = px.data.iris()
+df2 = px.scatter(df,
+            x='sepal_width',
+            y='sepal_length',
+            color='species',
+            facet_col='species',
+            title='Gráfico Facetado por Especie')
 
 fig.write_image("grafico.png")
 dcc.Graph(figure=fig)
 st.plotly_chart(fig)
+st.plotly_chart(fig2)
+st.plotly_chart(df2)
