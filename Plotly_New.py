@@ -5,51 +5,34 @@ import plotly.figure_factory as ff
 from dash import dcc
 import streamlit as st
 
-fig = make_subplots(rows=2, cols=2)
+fig = go.Figure(go.Scattergeo(lon=[-3.7, -99.1, -77.0],
+                                lat=[40.4, 19.4, -12.0],
+                                text=["Madrid", "México DF", "Lima"],
+                                mode='markers'))
+fig.update_layout(title='Mapa Básico de Puntos',
+                    geo_scope='world') # south america
 
-plot1 = go.Scatter(x=[1, 2, 3],
-                y=[4, 5, 6],
-                mode='lines+markers',
-                name='Plot 1')
-fig.add_trace(plot1, row=1, col=1)
+fig2 = go.Figure(go.Scattergeo(lon=[-3.7, -99.1, -77.0],
+                                lat=[40.4, 19.4, -12.0],
+                                text=["Madrid", "México DF", "Lima"],
+                                mode='markers',
+                                marker=dict(size=[16, 44, 48],
+                                            color=[10, 20, 30],
+                                            colorscale='Viridis',
+                                            showscale=True)))
 
-plot2 = go.Bar(x=['A', 'B', 'C'],
-            y=[7, 8, 9],
-            name='Plot 2')
-fig.add_trace(plot2, row=1, col=2)
+df = px.data.gapminder()
+df.head()
 
-plot3 = go.Scatter(x=[1, 2, 3],
-                y=[2, 3, 4],
-                mode='markers',
-                name='Plot 3')
-fig.add_trace(plot3, row=2, col=1)
-
-plot4 = go.Bar(x=['X', 'Y', 'Z'],
-            y=[1, 3, 2],
-            name='Plot 4')
-fig.add_trace(plot4, row=2, col=2)
-
-fig.update_layout(title="Subplots Básicos",
-                    showlegend=False)
-
-fig2 = make_subplots(rows=2, cols=2, shared_xaxes=True, shared_yaxes=True)
-fig2.add_trace(plot1, row=1, col=1)
-fig2.add_trace(plot2, row=1, col=2)
-fig2.add_trace(plot3, row=2, col=1)
-fig2.add_trace(plot4, row=2, col=2)
-fig2.update_layout(title="Subplots con ejes compartidos",
-                    showlegend=False)
-
-df = px.data.iris()
-df2 = px.scatter(df,
-            x='sepal_width',
-            y='sepal_length',
-            color='species',
-            facet_col='species',
-            title='Gráfico Facetado por Especie')
+fig3 = px.choropleth(df, 
+                        locations='iso_alpha',
+                        color='lifeExp',
+                        hover_name='country',
+                        color_continuous_scale=px.colors.sequential.Plasma,
+                        animation_frame='year')
 
 fig.write_image("grafico.png")
 dcc.Graph(figure=fig)
 st.plotly_chart(fig)
 st.plotly_chart(fig2)
-st.plotly_chart(df2)
+st.plotly_chart(fig3)
