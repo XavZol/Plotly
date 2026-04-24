@@ -1,51 +1,16 @@
-import plotly.graph_objects as go
-import plotly.express as px
-from plotly.subplots import make_subplots
-import plotly.figure_factory as ff
-import dash 
-from dash import dcc, html
-import streamlit as st
-import numpy as np
 import pandas as pd
-from dash.dependencies import Input, Output
+import numpy as np
+import plotly.express as px # Usamos Express en lugar de Cufflinks
+import streamlit as st
 
-# Crear un DataFrame de ejemplo
-df = pd.DataFrame({
-    "Fruta": ["Manzanas", "Naranjas", "Bananas", "Manzanas", "Naranjas", "Bananas"],
-    "Cantidad": [4, 1, 2, 2, 4, 5],
-    "Ciudad": ["BG", "BG", "BG", "BCN", "BCN", "BCN"]
-})
+np.random.seed(42)
+df = pd.DataFrame(np.random.randn(100, 2), columns=['A', 'B'])
 
-# Crear la aplicación Dash
-app = dash.Dash(__name__)
+# Plotly Express es el estándar actual
+fig = px.line(df, 
+            y=['A', 'B'], 
+            markers=True, # Esto activa los 'markers' que pedías
+            title='Gráfico Interactivo con Plotly Express')
 
-# Definir el layout de la aplicación
-app.layout = html.Div(children=[
-    html.H1(children='Dashboard Interactivo Avanzado'),
-    
-    dcc.Dropdown(
-        id='desplegable',
-        options=[
-            {'label': 'Bogotá', 'value': 'BG'},
-            {'label': 'Barcelona', 'value': 'BCN'}
-        ],
-        value='BG'
-    ),
-    
-    dcc.Graph(id='grafico')
-])
-
-# Callback para actualizar el gráfico basado en la selección del dropdown
-@app.callback(
-    Output('grafico', 'figure'),
-    [Input('desplegable', 'value')]
-)
-def actualizar_grafico(ciudad_seleccionada):
-    df_filtrado = df[df['Ciudad'] == ciudad_seleccionada]
-    fig = px.bar(df_filtrado, x='Fruta', y='Cantidad', color='Fruta')
-    return fig
-
-# Ejecutar la aplicación
-if __name__ == '__main__':
-    app.run(debug=True)
+st.plotly_chart(fig)
 
