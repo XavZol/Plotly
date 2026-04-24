@@ -2,44 +2,46 @@ import plotly.graph_objects as go
 import plotly.express as px
 from plotly.subplots import make_subplots
 import plotly.figure_factory as ff
-from dash import dcc
+import dash 
+from dash import dcc, html
 import streamlit as st
 import numpy as np
 
-fig = go.Figure(data=[go.Scatter3d(x=[1, 2, 3, 4, 5],
-                                    y=[10, 11, 12, 13, 14],
-                                    z=[5, 6, 7, 8, 9],
-                                    mode='markers',
-                                    marker=dict(size=10,
-                                                color=[10, 20, 30, 40, 50],
-                                                colorscale='viridis',
-                                                opacity=0.8))])
+app = dash.Dash(__name__)
 
-fig.update_layout(title='Gráfico en 3D',
-                    scene=dict(xaxis_title='Eje X',
-                                yaxis_title='Eje Y',
-                                zaxis_title='Eje Z'))
+app.layout = html.Div(children=[
+    html.H1(children='Hola Dash'),
+    html.Div(children='Este es un subtítulo'),
+    dcc.Graph(id='grafico-ejemplo',
+                figure={
+                    'data': [
+                        {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'Bogotá'},
+                        {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': 'Buenos Aires',}
+                    ],
+                    'layout': {'title': 'Visualización con Dash'}
+                })
+])
 
-x = np.linspace(-5, 5, 50)
-y = np.linspace(-5, 5, 50)
-x, y = np.meshgrid(x, y)
-z = np.sin(np.sqrt(x**2 + y**2))
+app = dash.Dash(__name__)
 
-fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale='viridis')])
+app.layout = html.Div(children=[
+    dcc.Input(id='caja-texto', type='text', value=''),
+    html.Button('Enviar', id='boton'),
+    html.Div(id='salida-boton', children='')
+])
 
-fig2 = go.Figure(data=[go.Scatter3d(x=[1, 2, 3, 4, 5],
-                                    y=[10, 11, 12, 13, 14],
-                                    z=[5, 6, 7, 8, 9],
-                                    mode='lines',
-                                    line=dict(color="blue",
-                                                width=2))])
+@app.callback(
+    dash.Output('salida-boton', 'children'),
+    [dash.Input('boton', 'n_clicks')],
+    [dash.State('caja-texto', 'value')])
+def actualizar_salida(n_clicks, valor):
+    if n_clicks == None:
+        return 'Introduzca un valor y presione el boton'
+    else:
+        return f'El valor ingresado es {valor}, el botón fue presionado {n_clicks} veces'
 
-fig2.update_layout(title='Gráfico de líneas en 3D',
-                    scene=dict(xaxis_title='Eje X',
-                                yaxis_title='Eje Y',
-                                zaxis_title='Eje Z'))
+if __name__ == '__main__':
+    app.run(debug=True)
 
-fig.write_image("grafico.png")
-dcc.Graph(figure=fig)
-st.plotly_chart(fig)
-st.plotly_chart(fig2)
+# dcc.Graph(figure=fig)
+# st.plotly_chart()
