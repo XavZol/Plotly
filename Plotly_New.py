@@ -6,42 +6,46 @@ import dash
 from dash import dcc, html
 import streamlit as st
 import numpy as np
+import pandas as pd
+from dash.dependencies import Input, Output
 
+# Crear un DataFrame de ejemplo
+df = pd.DataFrame({
+    "Fruta": ["Manzanas", "Naranjas", "Bananas", "Manzanas", "Naranjas", "Bananas"],
+    "Cantidad": [4, 1, 2, 2, 4, 5],
+    "Ciudad": ["BG", "BG", "BG", "BCN", "BCN", "BCN"]
+})
+
+# Crear la aplicación Dash
 app = dash.Dash(__name__)
 
+# Definir el layout de la aplicación
 app.layout = html.Div(children=[
-    html.H1(children='Hola Dash'),
-    html.Div(children='Este es un subtítulo'),
-    dcc.Graph(id='grafico-ejemplo',
-                figure={
-                    'data': [
-                        {'x': [1, 2, 3], 'y': [4, 1, 2], 'type': 'bar', 'name': 'Bogotá'},
-                        {'x': [1, 2, 3], 'y': [2, 4, 5], 'type': 'bar', 'name': 'Buenos Aires',}
-                    ],
-                    'layout': {'title': 'Visualización con Dash'}
-                })
+    html.H1(children='Dashboard Interactivo Avanzado'),
+    
+    dcc.Dropdown(
+        id='desplegable',
+        options=[
+            {'label': 'Bogotá', 'value': 'BG'},
+            {'label': 'Barcelona', 'value': 'BCN'}
+        ],
+        value='BG'
+    ),
+    
+    dcc.Graph(id='grafico')
 ])
 
-app = dash.Dash(__name__)
-
-app.layout = html.Div(children=[
-    dcc.Input(id='caja-texto', type='text', value=''),
-    html.Button('Enviar', id='boton'),
-    html.Div(id='salida-boton', children='')
-])
-
+# Callback para actualizar el gráfico basado en la selección del dropdown
 @app.callback(
-    dash.Output('salida-boton', 'children'),
-    [dash.Input('boton', 'n_clicks')],
-    [dash.State('caja-texto', 'value')])
-def actualizar_salida(n_clicks, valor):
-    if n_clicks == None:
-        return 'Introduzca un valor y presione el boton'
-    else:
-        return f'El valor ingresado es {valor}, el botón fue presionado {n_clicks} veces'
+    Output('grafico', 'figure'),
+    [Input('desplegable', 'value')]
+)
+def actualizar_grafico(ciudad_seleccionada):
+    df_filtrado = df[df['Ciudad'] == ciudad_seleccionada]
+    fig = px.bar(df_filtrado, x='Fruta', y='Cantidad', color='Fruta')
+    return fig
 
+# Ejecutar la aplicación
 if __name__ == '__main__':
     app.run(debug=True)
 
-# dcc.Graph(figure=fig)
-# st.plotly_chart()
