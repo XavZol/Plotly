@@ -1,41 +1,37 @@
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 
-fig = go.Figure()
+z = [[1, 20, 30],
+        [20, 1, 60],
+        [30, 60, 1]]
 
-fig.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
-                        y=[10, 15, 12, 17, 14],
-                        mode='lines',
-                        name='Linea'))
+fig = go.Figure(data=go.Heatmap(z=z))
 
-fig2 = go.Figure()
-fig2.add_trace(go.Bar(x=[1, 2, 3, 4, 5],
-                        y=[5, 6, 7, 8, 9],
-                        marker=dict(color='rgba(0, 128, 255, .6)',
-                                    line=dict(color='rgb(0, 0, 0)',
-                                                width=1.5))))
-fig2.update_layout(title='Gráfico de Barras',
-                    xaxis_title='Eje X',
-                    yaxis_title='Eje Y')
+fig.update_layout(title='Mapa de Calor')
 
-fig3 = go.Figure()
-fig3.add_trace(go.Scatter(x=[1, 2, 3, 4, 5],
-                        y=[10, 15, 12, 17, 14],
-                        mode='lines',
-                        fill='tozeroy',
-                        name='area'))
-fig3.update_layout(title='Gráfico de Area',
-                    xaxis_title='Eje X',
-                    yaxis_title='Eje Y')
+fig2 = go.Figure(data=go.Box(y=[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]))
+fig2.update_layout(title='Gráfico de Caja')
+
+fig3 = go.Figure(data=go.Scatter(x=[1, 2, 3, 4, 5],
+                                    y=[10, 15, 13, 17, 14],
+                                    mode='lines+markers'))
+fig3.update_layout(title='Gráfico de Dispersión con Líneas')
+
+y0 = [2, 3, 4, 5, 6, 7 , 8, 9]
+y1 = [3, 4, 5, 6, 7 , 8, 9, 10]
 
 fig4 = go.Figure()
-fig4.add_trace(go.Pie(labels=['A', 'B', 'C', 'D'],
-                        values=[4500, 2500, 1050, 750]))
-fig4.update_layout(title='Gráfico de Circular')
+fig4.add_trace(go.Violin(y=y0,
+                            name='y0',
+                            box_visible=True,
+                            meanline_visible=True))
+fig4.add_trace(go.Violin(y=y1,
+                            name='y1',
+                            box_visible=True,
+                            meanline_visible=True))
+fig4.update_layout(title='Gráfico de Violín')
 
-data = go.Histogram(x=[1, 2, 2, 3, 3, 3, 4])
-
-fig5 = go.Figure(data=data)
-fig5.update_layout(title='Histograma')
-
-fig5.write_html("grafico.html")
-print("Gráfico guardado como 'grafico.html'. Ábrelo en tu navegador.")
+df = [dict(Task='Tarea A', Start='2024-01-01', Finish='2024-01-05'),
+        dict(Task='Tarea B', Start='2024-01-06', Finish='2024-01-10')]
+fig5 = ff.create_gantt(df)
+fig5.update_layout(title='Gráfico de Gantt')
